@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciador de Pedidos</title>
+
+  <style>
+    :root {
+      --fundo: #0b1120;
+      --painel: #151f32;
+      --painel2: #1c2940;
+      --azul: #3b82f6;
+      --texto: #f1f5f9;
+      --secundario: #94a3b8;
+      --borda: #29364d;
+      --verde: #34d399;
+      --amarelo: #fbbf24;
+      --vermelho: #f87171;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: Arial, sans-serif;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .container {
+      max-width: 1150px;
+      margin: auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .logo {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      background: var(--azul);
+      border-radius: 14px;
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    h1, h2, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 5px;
+      font-size: 25px;
+    }
+
+    .subtitulo, .descricao {
+      color: var(--secundario);
+      font-size: 13px;
+    }
+
+    .conexao {
+      margin-left: auto;
+      color: var(--verde);
+      font-size: 13px;
+    }
+
+    .indicadores {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .cartao, .painel {
+      background: var(--painel);
+      border: 1px solid var(--borda);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .indicador-topo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icone {
+      font-size: 23px;
+    }
+
+    .numero {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 15px 0 5px;
+      overflow-wrap: anywhere;
+    }
+
+    .legenda {
+      color: var(--secundario);
+      font-size: 13px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(270px, 0.8fr) minmax(0, 1.7fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 7px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      color: var(--texto);
+      background: #0b1425;
+      border: 1px solid var(--borda);
+      border-radius: 8px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--azul);
+    }
+
+    button {
+      padding: 12px 14px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--azul);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      filter: brightness(1.1);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .botao-principal {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .filtros {
+      display: grid;
+      grid-template-columns: 1fr 170px;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .pedido {
+      background: var(--painel2);
+      border: 1px solid var(--borda);
+      border-radius: 11px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .pedido-topo, .pedido-rodape {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pedido h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .detalhe {
+      color: var(--secundario);
+      font-size: 13px;
+      margin: 8px 0;
+      overflow-wrap: anywhere;
+    }
+
+    .valor-pedido {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .selo {
+      display: inline-block;
+      padding: 6px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+      background: #334155;
+      color: #e2e8f0;
+    }
+
+    .selo.Pendente {
+      background: #59451a;
+      color: #fcd34d;
+    }
+
+    .selo.Concluído {
+      background: #124a3c;
+      color: #6ee7b7;
+    }
+
+    .selo.Cancelado {
+      background: #572a32;
+      color: #fda4af;
+    }
+
+    .pedido select {
+      max-width: 190px;
+      padding: 9px;
+    }
+
+    .botao-excluir {
+      background: #7f1d1d;
+      color: #fecaca;
+      padding: 9px 12px;
+    }
+
+    .mensagem {
+      color: var(--secundario);
+      font-size: 13px;
+      margin: 14px 0 0;
+      overflow-wrap: anywhere;
+    }
+
+    .vazio {
+      padding: 25px 10px;
+      text-align: center;
+      color: var(--secundario);
+    }
+
+    .erro {
+      color: var(--vermelho);
+    }
+
+    @media (max-width: 850px) {
+      .indicadores {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 14px;
+      }
+
+      .cartao, .painel {
+        padding: 15px;
+      }
+
+      .filtros {
+        grid-template-columns: 1fr;
+      }
+
+      .conexao {
+        font-size: 11px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .pedido-rodape {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .pedido select {
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <header>
+      <div class="logo">P</div>
+      <div>
+        <h1>Gerenciador de Pedidos</h1>
+        <div class="subtitulo">PAINEL DE CONTROLE</div>
+      </div>
+      <div class="conexao" id="conexao">● Verificando API</div>
+    </header>
+
+    <section class="indicadores">
+      <article class="cartao">
+        <div class="indicador-topo">
+          <span class="legenda">Total de pedidos</span>
+          <span class="icone">▤</span>
+        </div>
+        <div class="numero" id="total">0</div>
+        <div class="legenda">Pedidos registrados</div>
+      </article>
+
+      <article class="cartao">
+        <div class="indicador-topo">
+          <span class="legenda">Pendentes</span>
+          <span class="icone">◷</span>
+        </div>
+        <div class="numero" id="pendentes">0</div>
+        <div class="legenda">Aguardando andamento</div>
+      </article>
+
+      <article class="cartao">
+        <div class="indicador-topo">
+          <span class="legenda">Concluídos</span>
+          <span class="icone">✓</span>
+        </div>
+        <div class="numero" id="concluidos">0</div>
+        <div class="legenda">Pedidos finalizados</div>
+      </article>
+
+      <article class="cartao">
+        <div class="indicador-topo">
+          <span class="legenda">Valor registrado</span>
+          <span class="icone">R$</span>
+        </div>
+        <div class="numero" id="valorTotal">R$ 0,00</div>
+        <div class="legenda">Soma dos pedidos ativos</div>
+      </article>
+    </section>
+
+    <div class="layout">
+      <section class="painel">
+        <h2>Novo pedido</h2>
+        <p class="descricao">Preencha os dados para cadastrar.</p>
+
+        <form id="formPedido">
+          <label for="cliente">Nome do cliente</label>
+          <input id="cliente" required maxlength="100"
+                 placeholder="Nome do cliente">
+
+          <label for="tipo">Descrição do pedido</label>
+          <input id="tipo" required maxlength="200"
+                 placeholder="Ex.: Compra de produtos">
+
+          <label for="valor">Valor (R$)</label>
+          <input id="valor" type="number" min="0.01"
+                 step="0.01" required placeholder="0,00">
+
+          <label for="prioridade">Prioridade</label>
+          <select id="prioridade">
+            <option value="Baixa">Baixa</option>
+            <option value="Média" selected>Média</option>
+            <option value="Alta">Alta</option>
+          </select>
+
+          <button class="botao-principal" id="botaoCadastrar"
+                  type="submit">+ Cadastrar pedido</button>
+        </form>
+
+        <p class="mensagem" id="mensagem" role="status"
+           aria-live="polite">Pronto para cadastrar.</p>
+      </section>
+
+      <section class="painel">
+        <h2>Pedidos recentes</h2>
+        <p class="descricao">Consulte, filtre e gerencie seus pedidos.</p>
+
+        <div class="filtros">
+          <input id="busca" type="search"
+                 placeholder="Buscar cliente ou pedido...">
+
+          <select id="filtroStatus" aria-label="Filtrar por status">
+            <option value="">Todos os status</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Em andamento">Em andamento</option>
+            <option value="Concluído">Concluído</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+        </div>
+
+        <div id="listaPedidos">
+          <div class="vazio">Carregando pedidos...</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const API = "http://localhost:3000/pedidos";
+
+    const form = document.getElementById("formPedido");
+    const lista = document.getElementById("listaPedidos");
+    const mensagem = document.getElementById("mensagem");
+    const conexao = document.getElementById("conexao");
+    const botaoCadastrar = document.getElementById("botaoCadastrar");
+
+    let pedidos = [];
+
+    function dinheiro(valor) {
+      return Number(valor).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function informar(texto, erro = false) {
+      mensagem.textContent = texto;
+      mensagem.classList.toggle("erro", erro);
+    }
+
+    async function requisicao(url, opcoes = {}) {
+      const resposta = await fetch(url, opcoes);
+      const dados = await resposta.json().catch(() => ({}));
+
+      if (!resposta.ok) {
+        throw new Error(dados.erro || "Não foi possível concluir a operação.");
+      }
+
+      return dados;
+    }
+
+    async function carregarPedidos() {
+      try {
+        const dados = await requisicao(API);
+
+        if (!Array.isArray(dados)) {
+          throw new Error("A API retornou uma resposta inesperada.");
+        }
+
+        pedidos = dados;
+        conexao.textContent = "● API conectada";
+        conexao.style.color = "#34d399";
+
+        atualizarIndicadores();
+        mostrarPedidos();
+      } catch (erro) {
+        conexao.textContent = "● API desconectada";
+        conexao.style.color = "#f87171";
+        lista.replaceChildren();
+
+        const aviso = document.createElement("div");
+        aviso.className = "vazio erro";
+        aviso.textContent =
+          "Não foi possível carregar os pedidos. Verifique se o servidor está ligado.";
+        lista.appendChild(aviso);
+
+        informar(erro.message, true);
+      }
+    }
+
+    function atualizarIndicadores() {
+      document.getElementById("total").textContent = pedidos.length;
+
+      document.getElementById("pendentes").textContent =
+        pedidos.filter(p => p.status === "Pendente").length;
+
+      document.getElementById("concluidos").textContent =
+        pedidos.filter(p => p.status === "Concluído").length;
+
+      const total = pedidos
+        .filter(p => p.status !== "Cancelado")
+        .reduce((soma, p) => soma + Number(p.valor || 0), 0);
+
+      document.getElementById("valorTotal").textContent = dinheiro(total);
+    }
+
+    function criarTexto(texto, classe = "detalhe") {
+      const elemento = document.createElement("p");
+      elemento.className = classe;
+      elemento.textContent = texto;
+      return elemento;
+    }
+
+    function mostrarPedidos() {
+      const termo = document.getElementById("busca").value
+        .trim().toLocaleLowerCase("pt-BR");
+
+      const filtro = document.getElementById("filtroStatus").value;
+
+      const filtrados = pedidos.filter(pedido => {
+        const texto = `${pedido.id} ${pedido.cliente} ${pedido.tipo}`
+          .toLocaleLowerCase("pt-BR");
+
+        return texto.includes(termo) &&
+          (!filtro || pedido.status === filtro);
+      });
+
+      lista.replaceChildren();
+
+      if (filtrados.length === 0) {
+        const vazio = document.createElement("div");
+        vazio.className = "vazio";
+        vazio.textContent = pedidos.length
+          ? "Nenhum pedido corresponde à busca."
+          : "Nenhum pedido cadastrado ainda.";
+        lista.appendChild(vazio);
+        return;
+      }
+
+      filtrados.forEach(pedido => {
+        const cartao = document.createElement("article");
+        cartao.className = "pedido";
+
+        const topo = document.createElement("div");
+        topo.className = "pedido-topo";
+
+        const titulo = document.createElement("h3");
+        titulo.textContent = "Pedido #" + pedido.id;
+
+        const selo = document.createElement("span");
+        selo.className = "selo " + (
+          ["Pendente", "Concluído", "Cancelado"].includes(pedido.status)
+            ? pedido.status
+            : ""
+        );
+        selo.textContent = pedido.status || "Pendente";
+
+        topo.append(titulo, selo);
+
+        cartao.append(
+          topo,
+          criarTexto("Cliente: " + pedido.cliente),
+          criarTexto("Descrição: " + pedido.tipo),
+          criarTexto("Prioridade: " + pedido.prioridade)
+        );
+
+        const valor = document.createElement("p");
+        valor.className = "valor-pedido";
+        valor.textContent = dinheiro(pedido.valor);
+        cartao.appendChild(valor);
+
+        const rodape = document.createElement("div");
+        rodape.className = "pedido-rodape";
+
+        const seletor = document.createElement("select");
+        seletor.setAttribute("aria-label", "Alterar status do pedido " + pedido.id);
+
+        ["Pendente", "Em andamento", "Concluído", "Cancelado"]
+          .forEach(status => {
+            const opcao = document.createElement("option");
+            opcao.value = status;
+            opcao.textContent = status;
+            seletor.appendChild(opcao);
+          });
+
+        seletor.value = pedido.status || "Pendente";
+        seletor.addEventListener("change", async () => {
+          seletor.disabled = true;
+
+          try {
+            await requisicao(`${API}/${encodeURIComponent(pedido.id)}/status`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ status: seletor.value })
+            });
+
+            informar("Status atualizado e salvo!");
+            await carregarPedidos();
+          } catch (erro) {
+            informar(erro.message, true);
+            await carregarPedidos();
+          } finally {
+            seletor.disabled = false;
+          }
+        });
+
+        const excluir = document.createElement("button");
+        excluir.className = "botao-excluir";
+        excluir.textContent = "Excluir";
+        excluir.addEventListener("click", async () => {
+          if (!confirm("Deseja excluir o pedido #" + pedido.id + "?")) {
+            return;
+          }
+
+          excluir.disabled = true;
+
+          try {
+            await requisicao(`${API}/${encodeURIComponent(pedido.id)}`, {
+              method: "DELETE"
+            });
+
+            informar("Pedido excluído com sucesso!");
+            await carregarPedidos();
+          } catch (erro) {
+            informar(erro.message, true);
+            excluir.disabled = false;
+          }
+        });
+
+        rodape.append(seletor, excluir);
+        cartao.appendChild(rodape);
+        lista.appendChild(cartao);
+      });
+    }
+
+    form.addEventListener("submit", async evento => {
+      evento.preventDefault();
+
+      const novoPedido = {
+        cliente: document.getElementById("cliente").value.trim(),
+        tipo: document.getElementById("tipo").value.trim(),
+        valor: Number(document.getElementById("valor").value),
+        prioridade: document.getElementById("prioridade").value
+      };
+
+      if (!novoPedido.cliente || !novoPedido.tipo ||
+          !Number.isFinite(novoPedido.valor) || novoPedido.valor <= 0) {
+        informar("Preencha todos os campos com dados válidos.", true);
+        return;
+      }
+
+      botaoCadastrar.disabled = true;
+      botaoCadastrar.textContent = "Cadastrando...";
+
+      try {
+        await requisicao(API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(novoPedido)
+        });
+
+        form.reset();
+        document.getElementById("prioridade").value = "Média";
+
+        informar("Pedido cadastrado e salvo com sucesso!");
+        await carregarPedidos();
+      } catch (erro) {
+        informar(erro.message, true);
+      } finally {
+        botaoCadastrar.disabled = false;
+        botaoCadastrar.textContent = "+ Cadastrar pedido";
+      }
+    });
+
+    document.getElementById("busca").addEventListener("input", mostrarPedidos);
+    document.getElementById("filtroStatus").addEventListener("change", mostrarPedidos);
+
+    carregarPedidos();
+  </script>
+</body>
+</html>
